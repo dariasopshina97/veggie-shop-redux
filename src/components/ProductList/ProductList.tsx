@@ -1,13 +1,23 @@
+import { useEffect } from 'react';
 import { Alert, SimpleGrid, Skeleton, Stack } from '@mantine/core';
+import { useDispatch, useSelector } from 'react-redux';
 import { ProductCard } from '../ProductCard/ProductCard';
-import { useProducts } from '../../hooks/useProducts';
-import { useCart } from '../../context/CartContext';
+import { fetchProducts } from '../../features/products/productsSlice';
+import { addItem } from '../../features/cart/cartSlice';
+import type { RootState, AppDispatch } from '../../app/store';
 
 const SKELETONS = Array.from({ length: 8 });
 
 export function ProductList() {
-  const { products, loading, error } = useProducts();
-  const { addItem } = useCart();
+  const dispatch = useDispatch<AppDispatch>();
+
+  const { products, loading, error } = useSelector(
+    (state: RootState) => state.products,
+  );
+
+  useEffect(() => {
+    dispatch(fetchProducts());
+  }, [dispatch]);
 
   if (loading) {
     return (
@@ -38,7 +48,7 @@ export function ProductList() {
         <ProductCard
           key={p.id}
           product={p}
-          onAdd={(product, qty) => addItem(product, qty)}
+          onAdd={(product, qty) => dispatch(addItem({ product, qty }))}
         />
       ))}
     </SimpleGrid>

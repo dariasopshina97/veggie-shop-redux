@@ -1,12 +1,22 @@
 import { useState } from 'react';
 import { Group, Title, Badge, Button, Popover } from '@mantine/core';
 import { IconShoppingCart } from '@tabler/icons-react';
-import { useCart } from '../../context/CartContext';
+import { useDispatch, useSelector } from 'react-redux';
 import { CartMenu } from '../CartPopover/CartPopover';
+import { addOne, removeOne } from '../../features/cart/cartSlice';
+import type { RootState, AppDispatch } from '../../app/store';
 
 export function HeaderBar() {
-  const { items, totalCount, totalPrice, addOne, removeOne } = useCart();
   const [opened, setOpened] = useState(false);
+  const dispatch = useDispatch<AppDispatch>();
+
+  const items = useSelector((state: RootState) => state.cart.items);
+
+  const totalCount = items.reduce((sum, item) => sum + item.qty, 0);
+  const totalPrice = items.reduce(
+    (sum, item) => sum + item.qty * item.product.price,
+    0,
+  );
 
   return (
     <Group h="100%" px="md" justify="space-between" align="center">
@@ -50,8 +60,8 @@ export function HeaderBar() {
           <CartMenu
             items={items}
             totalPrice={totalPrice}
-            addOne={addOne}
-            removeOne={removeOne}
+            addOne={(id: number) => dispatch(addOne(id))}
+            removeOne={(id: number) => dispatch(removeOne(id))}
           />
         </Popover.Dropdown>
       </Popover>

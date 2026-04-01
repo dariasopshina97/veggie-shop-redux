@@ -9,13 +9,15 @@ import {
   Box,
 } from '@mantine/core';
 import { IconMinus, IconPlus } from '@tabler/icons-react';
-import type { CartContextValue } from '../../context/CartContext';
+import type { CartItem } from '../../types';
 import cartEmpty from '../../assets/cart_empty.svg';
 
-type Props = Pick<
-  CartContextValue,
-  'items' | 'totalPrice' | 'addOne' | 'removeOne'
->;
+type Props = {
+  items: CartItem[];
+  totalPrice: number;
+  addOne: (productId: number) => void;
+  removeOne: (productId: number) => void;
+};
 
 export function CartMenu({ items, totalPrice, addOne, removeOne }: Props) {
   if (items.length === 0) {

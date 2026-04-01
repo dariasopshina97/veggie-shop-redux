@@ -1,21 +1,7 @@
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import { screen, fireEvent } from '@testing-library/react';
 import { renderWithProviders } from '../../test/test-utils';
 import { HeaderBar } from './HeaderBar';
-
-vi.mock('../../context/CartContext', async (importOriginal) => {
-  const actual =
-    await importOriginal<typeof import('../../context/CartContext')>();
-  return {
-    ...actual,
-    useCart: () => ({
-      items: [],
-      totalPrice: 0,
-      addOne: vi.fn(),
-      removeOne: vi.fn(),
-    }),
-  };
-});
 
 describe('HeaderBar (без проверки суммы в шапке)', () => {
   it('показывает название сайта и кнопку Cart', () => {

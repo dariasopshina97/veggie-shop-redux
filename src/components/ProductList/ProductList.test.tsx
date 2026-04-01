@@ -1,45 +1,45 @@
 import { screen } from '@testing-library/react';
-import { vi, beforeEach } from 'vitest';
+import { vi } from 'vitest';
 import { renderWithProviders } from '../../test/test-utils';
+import { ProductList } from './ProductList';
 
-const addItem = vi.fn();
-vi.mock('../../context/CartContext', async (orig) => {
-  const mod = await orig();
+// Мокаем fetchProducts, чтобы не делать реальных HTTP-запросов в тестах
+vi.mock('../../features/products/productsSlice', async (importOriginal) => {
+  const actual =
+    await importOriginal<
+      typeof import('../../features/products/productsSlice')
+    >();
   return {
-    ...mod,
-    useCart: () => ({ addItem }),
+    ...actual,
+    fetchProducts: () => ({ type: 'test/noop' }),
   };
 });
 
-beforeEach(() => {
-  vi.resetModules();
-  addItem.mockClear();
+it('показывает скелетоны, пока данные загружаются', () => {
+  renderWithProviders(<ProductList />, {
+    products: { products: [], loading: true, error: null },
+  });
+
+  // Mantine Skeleton рендерит элементы с атрибутом data-visible
+  expect(document.querySelector('[data-visible]')).toBeInTheDocument();
 });
 
-it('показывает Loader, пока useProducts возвращает loading=true', async () => {
-  vi.doMock('../../hooks/useProducts', () => ({
-    useProducts: () => ({ products: [], loading: true, error: null }),
-  }));
-
-  const { ProductList } = await import('./ProductList');
-  renderWithProviders(<ProductList />);
-
-  expect(screen.getByRole('progressbar')).toBeInTheDocument();
-});
-
-it('рендерит карточки, когда loading=false и пришли products', async () => {
-  vi.doMock('../../hooks/useProducts', () => ({
-    useProducts: () => ({
+it('рендерит карточки, когда данные загружены', () => {
+  renderWithProviders(<ProductList />, {
+    products: {
       loading: false,
       error: null,
       products: [
-        { id: 1, name: 'Tomato - 1 Kg', price: 3, image: 'tomato.png' },
+        {
+          id: 1,
+          name: 'Tomato - 1 Kg',
+          price: 3,
+          image: 'tomato.png',
+          category: 'vegetables',
+        },
       ],
-    }),
-  }));
-
-  const { ProductList } = await import('./ProductList');
-  renderWithProviders(<ProductList />);
+    },
+  });
 
   expect(screen.getByText('Tomato')).toBeInTheDocument();
 });

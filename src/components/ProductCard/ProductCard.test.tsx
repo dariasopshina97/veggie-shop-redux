@@ -9,6 +9,7 @@ const product = {
   name: 'Cucumber - 1 Kg',
   price: 5,
   image: 'cucumber.png',
+  category: 'vegetables',
 };
 
 describe('ProductCard', () => {

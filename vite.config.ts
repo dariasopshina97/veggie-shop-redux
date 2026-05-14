@@ -3,5 +3,5 @@ import react from '@vitejs/plugin-react';
 
 export default defineConfig({
   plugins: [react()],
-  base: '/Practical-task-2-3-2-veggie-shop/',
+  base: '/veggie-shop-redux/',
 });

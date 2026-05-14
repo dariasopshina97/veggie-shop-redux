@@ -27,7 +27,6 @@ export const cartSlice = createSlice({
       const { product } = action.payload;
       const qty = Math.max(1, action.payload.qty || 1);
 
-      // Ищем товар в корзине, чтобы не дублировать позицию.
       const existingItem = state.items.find(
         (item) => item.product.id === product.id,
       );
@@ -50,7 +49,6 @@ export const cartSlice = createSlice({
     removeOne: (state, action: PayloadAction<number>) => {
       const productId = action.payload;
 
-      // Ищем индекс, чтобы можно было удалить элемент через splice.
       const index = state.items.findIndex(
         (item) => item.product.id === productId,
       );
